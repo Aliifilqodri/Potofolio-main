@@ -21,8 +21,19 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+// --- TIPE DATA UNTUK PENGALAMAN ---
+interface ExperienceData {
+  icon: React.ReactNode;
+  role: string;
+  company: string;
+  duration: string;
+  description: string;
+  tags: string[];
+  image?: string;
+}
+
 // --- DATA PENGALAMAN (TERMASUK PENDIDIKAN, PROYEK, DLL.) ---
-const experiences = [
+const experiences: ExperienceData[] = [
   {
     icon: <GraduationCap />,
     role: "Computer and Network Engineering Student",
@@ -46,7 +57,7 @@ const experiences = [
     description:
       "As part of 'Team Asikin', developed the award-winning submission for a web redesign competition. I utilized Figma to overhaul the user experience, focusing on modern UI principles, interactive prototyping, and improved usability.",
     tags: ["Figma", "UI Design", "Prototyping", "User Research", "Competition"],
-    image: "/photo/123.jpg", // Pastikan path ini benar
+    image: "/photo/123.jpg",
   },
   {
     icon: <Video />,
@@ -66,7 +77,6 @@ const experiences = [
       "Creating custom graphic assets, including logos, social media posts, and branding materials for various clients. Focused on delivering quality design that meets client specifications and deadlines.",
     tags: ["Figma", "Adobe", "Canva"],
   },
-  // Tambahkan pengalaman lain di sini
 ];
 
 // --- VARIAN ANIMASI ---
@@ -75,8 +85,14 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 };
 
+// --- PROPS UNTUK KOMPONEN ExperienceItem ---
+interface ExperienceItemProps {
+  item: ExperienceData;
+  index: number;
+}
+
 // --- KOMPONEN UNTUK SETIAP ITEM DI TIMELINE (DENGAN LOGIKA BARU) ---
-const ExperienceItem = ({ item, index }) => {
+const ExperienceItem: React.FC<ExperienceItemProps> = ({ item, index }) => {
   const [isPhotoVisible, setIsPhotoVisible] = useState(false);
   const isOdd = index % 2 !== 0;
 
@@ -109,14 +125,14 @@ const ExperienceItem = ({ item, index }) => {
             ))}
           </div>
 
-          {/* --- FITUR FOTO INTERAKTIF (SUDAH DIPERBAIKI) --- */}
+          {/* --- FITUR FOTO INTERAKTIF --- */}
           {item.image && (
             <>
               {/* Panel Foto */}
               <motion.div
                 className="absolute top-0 right-0 h-full w-full bg-black z-10"
                 initial={{ x: "100%" }}
-                animate={{ x: isPhotoVisible ? 0 : "100%" }} // Akan menutupi seluruh lebar kartu
+                animate={{ x: isPhotoVisible ? 0 : "100%" }}
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
               >
                 <Image
@@ -180,8 +196,9 @@ const ExperienceItem = ({ item, index }) => {
   );
 };
 
+// --- HALAMAN UTAMA EXPERIENCE ---
 export default function Experience() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
@@ -197,43 +214,25 @@ export default function Experience() {
             Aliif<span className="text-primary text-3xl">.</span>
           </Link>
           <div className="hidden md:flex gap-8">
-            <Link
-              href="/"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/" className="text-foreground hover:text-primary transition-colors duration-300">
               Home
             </Link>
-            <Link
-              href="/about"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/about" className="text-foreground hover:text-primary transition-colors duration-300">
               About Me
             </Link>
-            <Link
-              href="/skills"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/skills" className="text-foreground hover:text-primary transition-colors duration-300">
               Skills & Tools
             </Link>
-            <Link
-              href="/projects"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/projects" className="text-foreground hover:text-primary transition-colors duration-300">
               Projects
             </Link>
             <Link href="/experience" className="font-semibold text-primary">
               Experience
             </Link>
-            <Link
-              href="/testimonials"
-              className="text-foreground hover:text-foreground/70 transition"
-            >
+            <Link href="/testimonials" className="text-foreground hover:text-foreground/70 transition">
               Testimonials
             </Link>
-            <Link
-              href="/contact"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/contact" className="text-foreground hover:text-primary transition-colors duration-300">
               Contact Me
             </Link>
           </div>
@@ -257,8 +256,7 @@ export default function Experience() {
               My Experience
             </h1>
             <p className="text-lg text-foreground/60 max-w-2xl mx-auto mt-4">
-              A timeline of my professional growth, key projects, and
-              educational milestones.
+              A timeline of my professional growth, key projects, and educational milestones.
             </p>
           </motion.div>
 

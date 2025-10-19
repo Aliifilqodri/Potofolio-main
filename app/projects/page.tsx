@@ -1,14 +1,30 @@
 "use client";
 
-import React, { useState } from "react"; // useState ditambahkan
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion"; // AnimatePresence ditambahkan
-import { ExternalLink, ChevronDown, ChevronUp, Award } from "lucide-react"; // Ikon baru ditambahkan
-import { Button } from "@/components/ui/button"; // Button diimpor
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import { ExternalLink, ChevronDown, ChevronUp, Award } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// --- INTERFACE UNTUK DATA ---
+interface Project {
+  title: string;
+  description: string;
+  tags: string[];
+  image: string;
+  link?: string;
+}
+
+interface Certificate {
+  title: string;
+  issuer: string;
+  image: string;
+  link: string;
+}
 
 // --- DATA PROYEK ---
-const projects = [
+const projects: Project[] = [
   {
     title: "Operational Issues Dashboard",
     description:
@@ -18,8 +34,8 @@ const projects = [
   },
 ];
 
-// --- DATA SERTIFIKAT (Duplikat sudah dihapus) ---
-const certificates = [
+// --- DATA SERTIFIKAT ---
+const certificates: Certificate[] = [
   {
     title: "Wordpress Development",
     issuer: "Jagoan Hosting",
@@ -47,14 +63,13 @@ const certificates = [
   {
     title: "3rd Place Winner, UI/UX Competition",
     issuer: "AISCOMP 2024 - Telkom University",
-    image: "/cert/aiscomp.png", // Simpan gambar sertifikat dengan nama ini
-    link: "https://drive.google.com/file/d/1XeQgCDaKwvEBRrICmWEwY01jrele8JyJ/view?usp=sharing", // Ganti dengan link Google Drive jika Anda mau
+    image: "/cert/aiscomp.png",
+    link: "https://drive.google.com/file/d/1XeQgCDaKwvEBRrICmWEwY01jrele8JyJ/view?usp=sharing",
   },
-  // Tambahkan sertifikat ke-4 atau lebih di sini untuk melihat tombol "Show More"
 ];
 
 // --- VARIAN ANIMASI ---
-const fadeInUp = {
+const fadeInUp: Variants = {
   initial: { opacity: 0, y: 50 },
   animate: {
     opacity: 1,
@@ -62,10 +77,13 @@ const fadeInUp = {
     transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
   },
 };
-const staggerContainer = { animate: { transition: { staggerChildren: 0.1 } } };
+
+const staggerContainer: Variants = {
+  animate: { transition: { staggerChildren: 0.1 } },
+};
 
 // --- KOMPONEN KARTU PROYEK ---
-const ProjectCardContent = ({ project }) => (
+const ProjectCardContent = ({ project }: { project: Project }) => (
   <>
     <Image
       src={project.image}
@@ -103,7 +121,7 @@ export default function Projects() {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative isolate overflow-hidden">
-      {/* Latar Belakang Aurora Dinamis */}
+      {/* Background efek */}
       <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
       <motion.div
         className="absolute inset-0 -z-20"
@@ -120,7 +138,7 @@ export default function Projects() {
         }}
       />
 
-      {/* Navigation */}
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold">
@@ -171,7 +189,7 @@ export default function Projects() {
       </nav>
 
       <main>
-        {/* Bagian 1: Projects Section */}
+        {/* --- Projects Section --- */}
         <section id="projects" className="py-24 px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
@@ -192,6 +210,7 @@ export default function Projects() {
                 applications to modern UI/UX designs.
               </p>
             </motion.div>
+
             <motion.div
               className="grid md:grid-cols-2 gap-8"
               initial="initial"
@@ -221,7 +240,7 @@ export default function Projects() {
           </div>
         </section>
 
-        {/* Bagian 2: Certificates Section (SUDAH DIPERBARUI) */}
+        {/* --- Certificates Section --- */}
         <section id="certificates" className="py-24 px-4 bg-muted/30">
           <div className="max-w-6xl mx-auto">
             <motion.div
@@ -255,7 +274,7 @@ export default function Projects() {
                     key={index}
                     className="group relative aspect-[4/3] rounded-xl overflow-hidden shadow-lg"
                     variants={fadeInUp}
-                    layout // Menambahkan animasi layout yang halus
+                    layout
                     initial="initial"
                     animate="animate"
                     exit={{ opacity: 0, scale: 0.8 }}

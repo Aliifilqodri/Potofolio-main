@@ -1,30 +1,65 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ===============================
+# 🔒 SECURITY & ENVIRONMENT FILES
+# ===============================
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
 
-# Dependencies & Package Manager Logs
-/node_modules
-/.pnp
+# ===============================
+# 📦 DEPENDENCIES & PACKAGE MANAGERS
+# ===============================
+node_modules/
+.pnp/
 .pnp.js
 .yarn/install-state.gz
+.pnpm-debug.log*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 
-# Local Environment Variables (Sangat Penting untuk Keamanan!)
-.env
-.env*.local
+# ===============================
+# ⚙️ NEXT.JS BUILD & CACHE
+# ===============================
+.next/
+out/
+build/
+.next/static/
+.next/cache/
 
-# Next.js Build & Cache
-/.next/
-/out/
-/build
-
-# Vercel
-.vercel
-
-# TypeScript
+# ===============================
+# 💾 TYPESCRIPT BUILD FILES
+# ===============================
 *.tsbuildinfo
 next-env.d.ts
 
-# IDE Config
-.vscode
+# ===============================
+# 🧪 TESTS & COVERAGE
+# ===============================
+coverage/
+jest/
+.vitest/
+*.log
+
+# ===============================
+# 🧰 IDE / EDITOR SETTINGS
+# ===============================
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# ===============================
+# ☁️ DEPLOYMENT PLATFORMS
+# ===============================
+.vercel/
+.history/
+
+# ===============================
+# 📸 UPLOAD / TEMPORARY ASSETS
+# ===============================
+public/uploads/
+temp/
+tmp/

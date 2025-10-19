@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 // --- DATA LOGO TEKNOLOGI UNTUK SCROLL OTOMATIS ---
 const techLogos = [
@@ -13,10 +13,7 @@ const techLogos = [
   { src: "/photo/figma.png", alt: "Figma" },
   { src: "/photo/mongodb.png", alt: "MongoDB" },
   { src: "/photo/github.png", alt: "Github" },
-  { src: "/photo/capcut.png", alt: "Github" },
-  // { src: "/tech-logos/prisma.png", alt: "Prisma" },
-  // { src: "/tech-logos/javascript.png", alt: "JavaScript" },
-  // Duplicate logos for seamless infinite scroll effect
+  { src: "/photo/capcut.png", alt: "Capcut" },
   { src: "/upload/awttpd.png", alt: "Wattpadd" },
   { src: "/upload/tiktok.png", alt: "Tiktok" },
   { src: "/upload/yt.webp", alt: "Youtube" },
@@ -24,18 +21,23 @@ const techLogos = [
   { src: "/photo/figma.png", alt: "Figma" },
   { src: "/photo/mongodb.png", alt: "MongoDB" },
   { src: "/photo/github.png", alt: "Github" },
-  { src: "/photo/capcut.png", alt: "Github" },
-  // { src: "/tech-logos/prisma.png", alt: "Prisma" },
-  // { src: "/tech-logos/javascript.png", alt: "JavaScript" },
+  { src: "/photo/capcut.png", alt: "Capcut" },
 ];
 
 // --- VARIAN ANIMASI ---
-const fadeInUp = {
+const fadeInUp: Variants = {
   initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.42, 0, 0.58, 1], // easeOut versi array (valid)
+    },
+  },
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   animate: {
     transition: {
       staggerChildren: 0.1,
@@ -44,14 +46,14 @@ const staggerContainer = {
 };
 
 // Animasi untuk scroll horizontal tanpa batas
-const marqueeVariants = {
+const marqueeVariants: Variants = {
   animate: {
-    x: ["0%", "-100%"], // Scroll dari 0% ke -100% (lebar total logo)
+    x: ["0%", "-100%"],
     transition: {
       x: {
         repeat: Infinity,
         repeatType: "loop",
-        duration: 40, // Durasi untuk satu putaran penuh (semakin besar semakin lambat)
+        duration: 40,
         ease: "linear",
       },
     },
@@ -113,18 +115,6 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-64px)] flex flex-col items-center justify-center text-center px-4 pt-16 md:pt-0 pb-32 md:pb-0">
-        {/* Background Image of Aliif */}
-        {/* <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none opacity-20">
-          <Image
-            src="/my-profile-hero.png" // Pastikan gambar Anda tanpa background (PNG)
-            alt="Aliif - UI/UX Designer & UI/UX Designer"
-            width={700} // Sesuaikan lebar gambar
-            height={700} // Sesuaikan tinggi gambar
-            className="object-contain"
-            priority // Agar di-load lebih awal
-          />
-        </div> */}
-
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div
             initial="initial"
@@ -147,8 +137,8 @@ export default function Home() {
             <motion.h2
               className="text-5xl md:text-7xl font-light leading-none text-transparent bg-clip-text"
               style={{
-                WebkitTextStrokeWidth: "2px", // Lebar outline
-                WebkitTextStrokeColor: "var(--foreground)", // Warna outline
+                WebkitTextStrokeWidth: "2px",
+                WebkitTextStrokeColor: "var(--foreground)",
               }}
               variants={fadeInUp}
             >
@@ -192,7 +182,7 @@ export default function Home() {
         <motion.div
           className="flex whitespace-nowrap"
           variants={marqueeVariants}
-          initial="animate" // Langsung mulai animasi saat mount
+          initial="animate"
           animate="animate"
         >
           {techLogos.map((logo, index) => (
@@ -203,7 +193,7 @@ export default function Home() {
               <Image
                 src={logo.src}
                 alt={logo.alt}
-                width={60} // Sesuaikan ukuran logo
+                width={60}
                 height={60}
                 className="object-contain opacity-70 grayscale hover:grayscale-0 transition-all duration-300"
               />

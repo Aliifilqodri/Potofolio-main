@@ -3,7 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  Variants,
+} from "framer-motion";
 import { Code, Brush, Puzzle, Download } from "lucide-react";
 import React from "react";
 
@@ -11,49 +16,38 @@ import React from "react";
 const techLogos = [
   { src: "/photo/figma.png", alt: "Figma", size: 40, duration: 15 },
   { src: "/photo/tiktok.png", alt: "Tiktok", size: 35, duration: 18 },
-  {
-    src: "/photo/github.png",
-    alt: "Github",
-    size: 45,
-    duration: 20,
-  },
-  {
-    src: "/photo/vscode.png",
-    alt: "VSCODE",
-    size: 38,
-    duration: 16,
-  },
+  { src: "/photo/github.png", alt: "Github", size: 45, duration: 20 },
+  { src: "/photo/vscode.png", alt: "VSCODE", size: 38, duration: 16 },
   { src: "/photo/jsa.png", alt: "JCS", size: 42, duration: 17 },
-  {
-    src: "/photo/capcut.png",
-    alt: "CapCut",
-    size: 30,
-    duration: 19,
-    reverse: true,
-  },
-  { src: "/photo/wttpd.png", alt: "Wattpadd", size: 40, duration: 14 },
+  { src: "/photo/capcut.png", alt: "CapCut", size: 30, duration: 19, reverse: true },
+  { src: "/photo/wttpd.png", alt: "Wattpad", size: 40, duration: 14 },
 ];
 
 // --- VARIAN ANIMASI ---
-const fadeInUp = {
+// ✅ Pakai type Variants dan as const biar aman di TypeScript
+const fadeInUp: Variants = {
   initial: { opacity: 0, y: 50 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] },
+    transition: {
+      duration: 0.8,
+      ease: "easeOut" as const, // ✅ Type-safe literal
+    },
   },
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   animate: { transition: { staggerChildren: 0.1 } },
 };
 
-const typingContainer = {
+const typingContainer: Variants = {
   animate: { transition: { staggerChildren: 0.025 } },
 };
-const typingChar = {
-  initial: { opacity: 0, y: "20px" },
-  animate: { opacity: 1, y: "0px" },
+
+const typingChar: Variants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
 };
 
 export default function About() {
@@ -64,7 +58,6 @@ export default function About() {
   const rotateX = useTransform(y, [-150, 150], [10, -10]);
   const rotateY = useTransform(x, [-150, 150], [-10, 10]);
 
-  // ✅ PERUBAHAN DI SINI: Tambahkan tipe untuk 'event'
   const handleMouseMove = (event: React.MouseEvent) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
@@ -87,19 +80,17 @@ export default function About() {
          bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] 
          [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
       ></div>
+
       <motion.div
         className="absolute inset-0 -z-20"
         style={{
           background:
             "radial-gradient(circle at 10% 20%, rgba(var(--primary-rgb), 0.1) 0%, transparent 25%), radial-gradient(circle at 80% 90%, rgba(var(--primary-rgb), 0.1) 0%, transparent 25%)",
         }}
-        animate={{
-          scale: [1, 1.2, 1],
-          rotate: [0, 10, 0],
-        }}
+        animate={{ scale: [1, 1.2, 1], rotate: [0, 10, 0] }}
         transition={{
           duration: 20,
-          ease: "easeInOut",
+          ease: "easeInOut" as const,
           repeat: Infinity,
           repeatType: "reverse",
         }}
@@ -112,43 +103,25 @@ export default function About() {
             Aliif<span className="text-primary text-3xl">.</span>
           </Link>
           <div className="hidden md:flex gap-8">
-            <Link
-              href="/"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/" className="text-foreground hover:text-primary transition-colors duration-300">
               Home
             </Link>
             <Link href="/about" className="font-semibold text-primary">
               About Me
             </Link>
-            <Link
-              href="/skills"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/skills" className="text-foreground hover:text-primary transition-colors duration-300">
               Skills & Tools
             </Link>
-            <Link
-              href="/projects"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/projects" className="text-foreground hover:text-primary transition-colors duration-300">
               Projects
             </Link>
-            <Link
-              href="/experience"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/experience" className="text-foreground hover:text-primary transition-colors duration-300">
               Experience
             </Link>
-            <Link
-              href="/testimonials"
-              className="text-foreground hover:text-foreground/70 transition"
-            >
+            <Link href="/testimonials" className="text-foreground hover:text-foreground/70 transition">
               Testimonials
             </Link>
-            <Link
-              href="/contact"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/contact" className="text-foreground hover:text-primary transition-colors duration-300">
               Contact Me
             </Link>
           </div>
@@ -208,7 +181,7 @@ export default function About() {
               >
                 {techLogos.map((logo, index) => {
                   const angle = (index / techLogos.length) * 2 * Math.PI;
-                  const radius = 220; // Radius orbit
+                  const radius = 220;
                   const xPos = Math.cos(angle) * radius;
                   const yPos = Math.sin(angle) * radius;
 
@@ -225,7 +198,7 @@ export default function About() {
                       animate={{ rotate: logo.reverse ? -360 : 360 }}
                       transition={{
                         repeat: Infinity,
-                        ease: "linear",
+                        ease: "linear" as const,
                         duration: logo.duration,
                       }}
                     >
@@ -300,9 +273,7 @@ export default function About() {
                     <Brush className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg">
-                      The Ultra User Shield!
-                    </h4>
+                    <h4 className="font-bold text-lg">The Ultra User Shield!</h4>
                     <p className="text-foreground/60">
                       For me, humanity comes first! I strive to build interfaces
                       that are not only as sleek as an Ultra-suit but are also
@@ -316,9 +287,7 @@ export default function About() {
                     <Puzzle className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg">
-                      Infinite Upgrade Form!
-                    </h4>
+                    <h4 className="font-bold text-lg">Infinite Upgrade Form!</h4>
                     <p className="text-foreground/60">
                       The tech world is always spawning new monsters, but fear
                       not! My Color Timer never blinks red when it's time to
@@ -330,15 +299,9 @@ export default function About() {
               </motion.div>
 
               {/* Call to Action Buttons */}
-              <motion.div
-                className="flex flex-wrap gap-4 pt-6"
-                variants={fadeInUp}
-              >
+              <motion.div className="flex flex-wrap gap-4 pt-6" variants={fadeInUp}>
                 <Link href="/contact">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button
                       size="lg"
                       className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
@@ -348,10 +311,7 @@ export default function About() {
                   </motion.div>
                 </Link>
                 <a href="/Aliif-cv.pdf" download>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button size="lg" variant="outline">
                       <Download className="mr-2 h-4 w-4" />
                       Download CV

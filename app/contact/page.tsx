@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+} from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
   Mail,
   MapPin,
@@ -24,7 +30,7 @@ import {
   Loader2,
   CheckCircle2,
   XCircle,
-  PenSquare, // Ikon baru ditambahkan
+  PenSquare,
 } from "lucide-react";
 
 // --- DATA KONTAK & SOSIAL MEDIA ---
@@ -63,16 +69,26 @@ const socialLinks = [
 ];
 
 // --- KOMPONEN ANIMASI TEKS ---
-const AnimatedText = ({ text, className = "" }) => {
+interface AnimatedTextProps {
+  text: string;
+  className?: string;
+}
+
+const AnimatedText: React.FC<AnimatedTextProps> = ({
+  text,
+  className = "",
+}) => {
   const words = text.split(" ");
-  const container = {
+
+  const container: Variants = {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
       transition: { staggerChildren: 0.05, delayChildren: 0.04 * i },
     }),
   };
-  const child = {
+
+  const child: Variants = {
     visible: {
       opacity: 1,
       y: 0,
@@ -114,22 +130,28 @@ export default function Contact() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [submissionStatus, setSubmissionStatus] = useState<
+    "success" | "error" | null
+  >(null);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: globalThis.MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+
+    window.addEventListener("mousemove", handleMouseMove as EventListener);
+    return () =>
+      window.removeEventListener("mousemove", handleMouseMove as EventListener);
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmissionStatus(null);
@@ -170,48 +192,23 @@ export default function Contact() {
               Aliif<span className="text-primary text-3xl">.</span>
             </Link>
             <div className="hidden md:flex gap-8">
-              <Link
-                href="/"
-                className="text-foreground hover:text-primary transition-colors duration-300"
-              >
-                Home
-              </Link>
-              <Link
-                href="/about"
-                className="text-foreground hover:text-primary transition-colors duration-300"
-              >
-                About Me
-              </Link>
-              <Link
-                href="/skills"
-                className="text-foreground hover:text-primary transition-colors duration-300"
-              >
-                Skills & Tools
-              </Link>
-              <Link
-                href="/projects"
-                className="text-foreground hover:text-primary transition-colors duration-300"
-              >
-                Projects
-              </Link>
-              <Link
-                href="/experience"
-                className="text-foreground hover:text-primary transition-colors duration-300"
-              >
-                Experience
-              </Link>
-              <Link
-                href="/testimonials"
-                className="text-foreground hover:text-primary transition-colors duration-300"
-              >
-                Testimonials
-              </Link>
-              <Link
-                href="/contact"
-                className="text-foreground hover:text-primary transition-colors duration-300"
-              >
-                Contact Me
-              </Link>
+              {[
+                { href: "/", label: "Home" },
+                { href: "/about", label: "About Me" },
+                { href: "/skills", label: "Skills & Tools" },
+                { href: "/projects", label: "Projects" },
+                { href: "/experience", label: "Experience" },
+                { href: "/testimonials", label: "Testimonials" },
+                { href: "/contact", label: "Contact Me" },
+              ].map((nav) => (
+                <Link
+                  key={nav.href}
+                  href={nav.href}
+                  className="text-foreground hover:text-primary transition-colors duration-300"
+                >
+                  {nav.label}
+                </Link>
+              ))}
             </div>
           </div>
         </nav>
@@ -293,7 +290,6 @@ export default function Contact() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeInOut" }}
             >
-              {/* --- JUDUL BARU YANG LEBIH KEREN --- */}
               <motion.h2
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -325,6 +321,7 @@ export default function Contact() {
                     Your Name
                   </Label>
                 </div>
+
                 <div className="relative group">
                   <Input
                     name="email"
@@ -343,6 +340,7 @@ export default function Contact() {
                     Your Email
                   </Label>
                 </div>
+
                 <div className="relative group">
                   <Textarea
                     name="message"

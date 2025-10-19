@@ -5,26 +5,11 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Star,
-  Quote,
-  Upload,
-  Loader2,
-  X,
-} from "lucide-react";
+import { Testimonial } from "../types/testimonial"; // ✅ Import langsung dari types
+import { Star, Quote, Upload, Loader2, X } from "lucide-react";
 import toast from "react-hot-toast";
 
-// Interface diperbarui (tidak ada perubahan di sini)
-interface Testimonial {
-  _id: string;
-  name: string;
-  description: string;
-  stars: number;
-  status?: string;
-  photo?: string | null;
-}
-
-// Komponen Kartu Testimoni
+// 🔹 Komponen Kartu Testimoni
 const TestimonialCard = ({
   testimonial,
   onImageClick,
@@ -73,7 +58,7 @@ const TestimonialCard = ({
                 alt={testimonial.name}
                 fill
                 className="object-cover"
-                unoptimized={true} // ✅ Nonaktifkan optimasi untuk gambar kecil
+                unoptimized={true}
               />
             </div>
           )}
@@ -89,7 +74,7 @@ const TestimonialCard = ({
   );
 };
 
-// Komponen StarRatingInput (tidak ada perubahan)
+// 🔹 Komponen Input Rating Bintang
 const StarRatingInput = ({
   rating,
   setRating,
@@ -126,7 +111,7 @@ const StarRatingInput = ({
   );
 };
 
-// Komponen Utama Halaman
+// 🔹 Komponen Utama
 export default function Testimonials({
   addTestimonialAction,
   testimonialsData,
@@ -172,20 +157,15 @@ export default function Testimonials({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const currentFormData = new FormData(e.currentTarget);
-    const name = currentFormData.get("name");
-    const description = currentFormData.get("description");
-    const status = currentFormData.get("status");
+    const data = new FormData(e.currentTarget);
+    data.append("stars", rating.toString());
 
-    if (!name || !description || !status) {
+    if (!formData.name || !formData.description || !formData.status) {
       toast.error("Semua kolom wajib diisi!");
       return;
     }
 
     setIsSubmitting(true);
-
-    const data = new FormData(e.currentTarget);
-    data.append("stars", rating.toString());
 
     const submitPromise = addTestimonialAction(data);
 
@@ -222,50 +202,39 @@ export default function Testimonials({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigasi & Header (tidak ada perubahan) */}
+      {/* 🔸 Navbar */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold">
             Aliif<span className="text-primary text-3xl">.</span>
           </Link>
           <div className="hidden md:flex gap-8">
-            <Link
-              href="/"
-              className="text-foreground hover:text-primary transition"
-            >
+            <Link href="/" className="hover:text-primary transition">
               Home
             </Link>
-            <Link
-              href="/about"
-              className="text-foreground hover:text-primary transition"
-            >
+            <Link href="/about" className="hover:text-primary transition">
               About Me
             </Link>
-            <Link
-              href="/projects"
-              className="text-foreground hover:text-primary transition"
-            >
+            <Link href="/projects" className="hover:text-primary transition">
               Projects
             </Link>
             <Link href="/testimonials" className="font-semibold text-primary">
               Testimonials
             </Link>
-            <Link
-              href="/contact"
-              className="text-foreground hover:text-primary transition"
-            >
+            <Link href="/contact" className="hover:text-primary transition">
               Contact Me
             </Link>
           </div>
         </div>
       </nav>
 
+      {/* 🔸 Header Section */}
       <section className="py-20 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-5xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70 text-balance"
+          className="text-5xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70"
         >
           Voices of Collaboration
         </motion.h1>
@@ -280,13 +249,13 @@ export default function Testimonials({
         </motion.p>
       </section>
 
-      {/* Grid Testimoni */}
+      {/* 🔸 Grid Testimonial */}
       <section className="max-w-6xl mx-auto px-4 pb-20">
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
           <AnimatePresence>
             {testimonials.map((testimonial) => (
               <TestimonialCard
-                key={testimonial._id}
+                key={testimonial._id || testimonial.name}
                 testimonial={testimonial}
                 onImageClick={openImageModal}
               />
@@ -295,7 +264,7 @@ export default function Testimonials({
         </div>
       </section>
 
-      {/* Formulir Testimoni */}
+      {/* 🔸 Formulir Testimonial */}
       <section className="py-20 bg-muted/50 border-t border-border">
         <div className="max-w-2xl mx-auto px-4">
           <div className="text-center mb-12">
@@ -311,7 +280,7 @@ export default function Testimonials({
             className="space-y-6 bg-card/50 border border-border rounded-xl p-8 backdrop-blur-sm"
           >
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
+              <label className="block text-sm font-semibold mb-2">
                 Your Name *
               </label>
               <input
@@ -321,12 +290,12 @@ export default function Testimonials({
                 onChange={handleInputChange}
                 required
                 placeholder="John Doe"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
+              <label className="block text-sm font-semibold mb-2">
                 Your Role / Status *
               </label>
               <input
@@ -336,12 +305,12 @@ export default function Testimonials({
                 onChange={handleInputChange}
                 required
                 placeholder="e.g., Client, Project Manager"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
+              <label className="block text-sm font-semibold mb-2">
                 Your Testimonial *
               </label>
               <textarea
@@ -349,21 +318,21 @@ export default function Testimonials({
                 value={formData.description}
                 onChange={handleInputChange}
                 required
-                placeholder="Share your experience working with me..."
                 rows={5}
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition resize-none"
+                placeholder="Share your experience..."
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg resize-none focus:ring-2 focus:ring-primary/50"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-3">
+              <label className="block text-sm font-semibold mb-3">
                 Rating *
               </label>
               <StarRatingInput rating={rating} setRating={setRating} />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
+              <label className="block text-sm font-semibold mb-2">
                 Photo (Optional)
               </label>
               <label
@@ -402,7 +371,7 @@ export default function Testimonials({
         </div>
       </section>
 
-      {/* Komponen Modal Gambar */}
+      {/* 🔸 Modal Gambar */}
       <AnimatePresence>
         {isModalOpen && selectedImage && (
           <motion.div
@@ -423,7 +392,6 @@ export default function Testimonials({
               <button
                 onClick={closeImageModal}
                 className="absolute top-2 right-2 p-2 bg-background/50 text-foreground rounded-full hover:bg-background transition z-20"
-                aria-label="Close image"
               >
                 <X size={24} />
               </button>
@@ -435,7 +403,7 @@ export default function Testimonials({
                   style={{ objectFit: "contain" }}
                   className="rounded-lg"
                   quality={90}
-                  unoptimized={true} // ✅ Nonaktifkan optimasi untuk gambar besar
+                  unoptimized
                 />
               </div>
               <p className="absolute bottom-2 left-0 right-0 text-center text-sm text-foreground/80 bg-black/50 p-2 pointer-events-none">

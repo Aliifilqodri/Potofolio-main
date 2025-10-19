@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, Variants, easeOut, easeInOut } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import React from "react";
 
@@ -12,16 +12,15 @@ const creatorPlatforms = [
     platform: "TikTok",
     description:
       "Creative and engaging short videos discussing Tokusatsu, anime, and Korean dramas.",
-    link: "https://www.tiktok.com/@aalipli?lang=en", // Replace with your link
+    link: "https://www.tiktok.com/@aalipli?lang=en",
     logo: "/upload/tiktok.png",
-    profileImage: "upload/aliif-profile.png", // Your profile picture
+    profileImage: "/upload/aliif-profile.png",
   },
-
   {
     platform: "YouTube",
     description:
       "Creative and engaging short videos discussing Ultraman, Super Sentai, and other Tokusatsu series.",
-    link: "https://www.youtube.com/channel/UCQIMzkskw3-cVmH697oVZYw", // Ganti dengan link YouTube Anda
+    link: "https://www.youtube.com/channel/UCQIMzkskw3-cVmH697oVZYw",
     logo: "/upload/yt.webp",
     profileImage: "/upload/yt.png",
   },
@@ -29,21 +28,18 @@ const creatorPlatforms = [
     platform: "Wattpad",
     description:
       "A collection of cool fantasy stories and original narratives that I write.",
-    link: "https://www.wattpad.com/user/aleevvideo", // Ganti dengan link Wattpad Anda
+    link: "https://www.wattpad.com/user/aleevvideo",
     logo: "/upload/awttpd.png",
     profileImage: "/upload/wttpd.png",
   },
 ];
 
-// --- DATA SKILL TEKNIS (TETAP SAMA) ---
+// --- DATA SKILL TEKNIS ---
 const skillCategories = [
   {
     category: "Frontend Development",
     skills: [
-      /* ...data skill frontend Anda... */ {
-        name: "HTML",
-        icon: "/code/html.png",
-      },
+      { name: "HTML", icon: "/code/html.png" },
       { name: "CSS", icon: "/code/css.png" },
       { name: "JavaScript", icon: "/code/js.png" },
       { name: "TypeScript", icon: "/code/ts.png" },
@@ -55,10 +51,7 @@ const skillCategories = [
   {
     category: "Backend Development",
     skills: [
-      /* ...data skill backend Anda... */ {
-        name: "Node.js",
-        icon: "/code/nodejs.png",
-      },
+      { name: "Node.js", icon: "/code/nodejs.png" },
       { name: "Express.js", icon: "/code/expressjs.png" },
       { name: "MySQL", icon: "/code/mysql.png" },
       { name: "PHP", icon: "/code/php.png" },
@@ -67,26 +60,32 @@ const skillCategories = [
   {
     category: "Design & Other Tools",
     skills: [
-      /* ...data skill design Anda... */ {
-        name: "Figma",
-        icon: "/code/figma.png",
-      },
+      { name: "Figma", icon: "/code/figma.png" },
       { name: "Adobe Photoshop", icon: "/code/Adobe.png" },
     ],
   },
 ];
 
-// --- VARIAN ANIMASI ---
-const fadeInUp = {
+// --- VARIAN ANIMASI (FIXED UNTUK TYPESCRIPT) ---
+const fadeInUp: Variants = {
   initial: { opacity: 0, y: 50 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] },
+    transition: {
+      duration: 0.6,
+      ease: easeOut, // ✅ gunakan fungsi, bukan string
+    },
   },
 };
-const staggerContainer = {
-  animate: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+
+const staggerContainer: Variants = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
 };
 
 export default function Skills() {
@@ -102,64 +101,48 @@ export default function Skills() {
         animate={{ scale: [1, 1.2, 1], rotate: [0, 10, 0] }}
         transition={{
           duration: 20,
-          ease: "easeInOut",
+          ease: easeInOut, // ✅ ubah dari string ke fungsi
           repeat: Infinity,
           repeatType: "reverse",
         }}
       />
 
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
-        {/* ... (kode navigasi tetap sama, pastikan link /skills aktif) ... */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold">
             Aliif<span className="text-primary text-3xl">.</span>
           </Link>
           <div className="hidden md:flex gap-8">
-            <Link
-              href="/"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/" className="text-foreground hover:text-primary transition-colors">
               Home
             </Link>
-            <Link
-              href="/about"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/about" className="text-foreground hover:text-primary transition-colors">
               About Me
             </Link>
             <Link href="/skills" className="font-semibold text-primary">
               Skills & Tools
             </Link>
-            <Link
-              href="/projects"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/projects" className="text-foreground hover:text-primary transition-colors">
               Projects
             </Link>
-            <Link
-              href="/experience"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/experience" className="text-foreground hover:text-primary transition-colors">
               Experience
             </Link>
-            <Link
-              href="/testimonials"
-              className="text-foreground hover:text-foreground/70 transition"
-            >
+            <Link href="/testimonials" className="text-foreground hover:text-primary transition-colors">
               Testimonials
             </Link>
-            <Link
-              href="/contact"
-              className="text-foreground hover:text-primary transition-colors duration-300"
-            >
+            <Link href="/contact" className="text-foreground hover:text-primary transition-colors">
               Contact Me
             </Link>
           </div>
         </div>
       </nav>
 
+      {/* Main Content */}
       <main className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
+          {/* Intro Section */}
           <motion.div
             className="text-center mb-16"
             initial="initial"
@@ -179,7 +162,7 @@ export default function Skills() {
             </p>
           </motion.div>
 
-          {/* BAGIAN BARU: CREATOR PLATFORMS */}
+          {/* Creator Platforms */}
           <motion.div
             initial="initial"
             whileInView="animate"
@@ -203,8 +186,6 @@ export default function Skills() {
                       fill
                       className="object-cover w-full h-full transition-all duration-500 ease-in-out group-hover:scale-110"
                     />
-
-                    {/* Logo Platform */}
                     <div className="absolute top-4 right-4 p-2 bg-background/50 backdrop-blur-sm rounded-full">
                       <Image
                         src={platform.logo}
@@ -213,8 +194,6 @@ export default function Skills() {
                         height={24}
                       />
                     </div>
-
-                    {/* Overlay Deskripsi saat Hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6 text-white transform translate-y-1/2 group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
                       <h3 className="text-2xl font-bold mb-2">
                         {platform.platform}
@@ -232,7 +211,7 @@ export default function Skills() {
             </div>
           </motion.div>
 
-          {/* BAGIAN TECHNICAL STACK (DIPERBARUI) */}
+          {/* Technical Stack */}
           <motion.div
             className="mt-24 pt-16 border-t border-border"
             initial="initial"
@@ -244,11 +223,7 @@ export default function Skills() {
               My Technical Stack
             </h2>
             {skillCategories.map((category) => (
-              <motion.div
-                key={category.category}
-                variants={fadeInUp}
-                className="mb-12"
-              >
+              <motion.div key={category.category} variants={fadeInUp} className="mb-12">
                 <h3 className="text-2xl font-semibold mb-6 text-center md:text-left">
                   {category.category}
                 </h3>
@@ -260,7 +235,6 @@ export default function Skills() {
                       whileHover={{ y: -5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      {/* Efek Border Gradien saat Hover */}
                       <div className="absolute inset-0 p-px rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <div className="w-full h-full rounded-lg bg-gradient-to-br from-primary" />
                       </div>
