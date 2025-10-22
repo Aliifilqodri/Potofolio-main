@@ -8,9 +8,13 @@ import {
   useMotionValue,
   useTransform,
   Variants,
+  AnimatePresence, // <-- 1. TAMBAHKAN INI
 } from "framer-motion";
 import { Code, Brush, Puzzle, Download } from "lucide-react";
-import React from "react";
+import React, { useState } from "react"; // <-- 2. TAMBAHKAN useState
+
+// --- 3. TAMBAHKAN KOMPONEN LINK ANIMASI ---
+const MotionLink = motion(Link);
 
 // --- DATA LOGO ---
 const techLogos = [
@@ -24,7 +28,6 @@ const techLogos = [
 ];
 
 // --- VARIAN ANIMASI ---
-// ✅ Pakai type Variants dan as const biar aman di TypeScript
 const fadeInUp: Variants = {
   initial: { opacity: 0, y: 50 },
   animate: {
@@ -32,7 +35,7 @@ const fadeInUp: Variants = {
     y: 0,
     transition: {
       duration: 0.8,
-      ease: "easeOut" as const, // ✅ Type-safe literal
+      ease: "easeOut" as const,
     },
   },
 };
@@ -50,7 +53,109 @@ const typingChar: Variants = {
   animate: { opacity: 1, y: 0 },
 };
 
+// --- 4. TAMBAHKAN SEMUA VARIAN UNTUK MENU BARU ---
+const mobileDrawerVariants: Variants = {
+  initial: {
+    x: "100%",
+  },
+  animate: {
+    x: "0%",
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 30,
+      delayChildren: 0.2,
+      staggerChildren: 0.08,
+    },
+  },
+  exit: {
+    x: "100%",
+    transition: {
+      duration: 0.3,
+      ease: [0.42, 0, 0.58, 1],
+    },
+  },
+};
+
+const linkFadeInUp: Variants = {
+  initial: {
+    opacity: 0,
+    y: 30,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut",
+    },
+  },
+};
+
+const backdropVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
+// --- 5. TAMBAHKAN KOMPONEN IKON HAMBURGER ANIMASI ---
+const AnimatedHamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
+  const variant = isOpen ? "open" : "closed";
+  const top = {
+    closed: { rotate: 0, translateY: 0 },
+    open: { rotate: 45, translateY: 8 },
+  };
+  const middle = {
+    closed: { opacity: 1 },
+    open: { opacity: 0 },
+  };
+  const bottom = {
+    closed: { rotate: 0, translateY: 0 },
+    open: { rotate: -45, translateY: -8 },
+  };
+
+  return (
+    <motion.svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      animate={variant}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
+      <motion.path
+        d="M3 6H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={top}
+      />
+      <motion.path
+        d="M3 12H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={middle}
+      />
+      <motion.path
+        d="M3 18H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={bottom}
+      />
+    </motion.svg>
+  );
+};
+
 export default function About() {
+  // --- 6. TAMBAHKAN STATE & HANDLER UNTUK MENU ---
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const closeMenu = () => setIsMenuOpen(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  // --- Ini kode 3D parallax Anda, sudah benar ---
   const ref = React.useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -74,11 +179,11 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative isolate overflow-hidden">
-      {/* Latar Belakang */}
+      {/* Latar Belakang (sudah benar) */}
       <div
         className="absolute inset-0 -z-10 h-full w-full bg-background 
-         bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] 
-         [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
+        bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] 
+        [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
       ></div>
 
       <motion.div
@@ -96,39 +201,156 @@ export default function About() {
         }}
       />
 
-      {/* Navigation */}
+      {/* --- 7. GANTI SEMUA BLOK <nav> DENGAN YANG BARU --- */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold">
+          <Link href="/" className="text-2xl font-bold" onClick={closeMenu}>
             Aliif<span className="text-primary text-3xl">.</span>
           </Link>
-          <div className="hidden md:flex gap-8">
-            <Link href="/" className="text-foreground hover:text-primary transition-colors duration-300">
+
+          {/* Navigasi Desktop (breakpoint di 'lg') */}
+          <div className="hidden lg:flex gap-8">
+            <Link
+              href="/"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Home
             </Link>
             <Link href="/about" className="font-semibold text-primary">
               About Me
             </Link>
-            <Link href="/skills" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/skills"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Skills & Tools
             </Link>
-            <Link href="/projects" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/projects"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Projects
             </Link>
-            <Link href="/experience" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/experience"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Experience
             </Link>
-            <Link href="/testimonials" className="text-foreground hover:text-foreground/70 transition">
+            <Link
+              href="/testimonials"
+              className="text-foreground hover:text-primary transition-colors duration-300" // Perbaiki hover
+            >
               Testimonials
             </Link>
-            <Link href="/contact" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/contact"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Contact Me
             </Link>
+          </div>
+
+          {/* Tombol Hamburger Menu (tampil di bawah 'lg') */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              aria-label="Toggle navigation menu"
+            >
+              <AnimatedHamburgerIcon isOpen={isMenuOpen} />
+            </Button>
           </div>
         </div>
       </nav>
 
-      {/* About Section */}
+      {/* --- 8. TAMBAHKAN BLOK <AnimatePresence> UNTUK MENU DRAWER --- */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Backdrop Gelap */}
+            <motion.div
+              key="backdrop"
+              variants={backdropVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              onClick={closeMenu}
+              className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            />
+
+            {/* Panel Menu (Glassmorphism) */}
+            <motion.div
+              key="drawer"
+              variants={mobileDrawerVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-background/80 backdrop-blur-lg flex flex-col items-center justify-center gap-10 lg:hidden"
+            >
+              <MotionLink
+                href="/"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Home
+              </MotionLink>
+              <MotionLink
+                href="/about"
+                className="text-2xl font-semibold text-primary" // Highlight halaman ini
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                About Me
+              </MotionLink>
+              <MotionLink
+                href="/skills"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Skills & Tools
+              </MotionLink>
+              <MotionLink
+                href="/projects"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Projects
+              </MotionLink>
+              <MotionLink
+                href="/experience"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Experience
+              </MotionLink>
+              <MotionLink
+                href="/testimonials"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Testimonials
+              </MotionLink>
+              <MotionLink
+                href="/contact"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Contact Me
+              </MotionLink>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* About Section (Kode Anda, sudah benar) */}
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div

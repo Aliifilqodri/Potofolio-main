@@ -2,24 +2,28 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import {
   motion,
   useScroll,
   useTransform,
   AnimatePresence,
+  Variants,
 } from "framer-motion";
 import { useRef, useState } from "react";
 import {
   Briefcase,
   GraduationCap,
-  Wrench,
   Video,
   Code,
-  Globe,
-  PenTool,
   ChevronLeft,
   ChevronRight,
+  Award,
+  Users, // <-- Icon baru untuk peran multi-fungsi
 } from "lucide-react";
+
+// --- KOMPONEN LINK ANIMASI ---
+const MotionLink = motion(Link);
 
 // --- TIPE DATA UNTUK PENGALAMAN ---
 interface ExperienceData {
@@ -34,6 +38,7 @@ interface ExperienceData {
 
 // --- DATA PENGALAMAN (TERMASUK PENDIDIKAN, PROYEK, DLL.) ---
 const experiences: ExperienceData[] = [
+  // Entri Pendidikan (Tetap)
   {
     icon: <GraduationCap />,
     role: "Computer and Network Engineering Student",
@@ -49,6 +54,18 @@ const experiences: ExperienceData[] = [
       "Problem Solving",
     ],
   },
+  // Lomba Redesign Web
+  {
+    icon: <Award />,
+    role: "Website Redesign Competition Participant (Top 10)",
+    company: "Sticky Malang - Government Website Theme",
+    duration: "2024",
+    description:
+      "Participated in a government website redesign competition held by Sticky Malang, achieving a top 10 position. Focused on improving user interface and experience for public service websites using Figma.",
+    tags: ["Web Redesign", "UI Design", "UX Design", "Competition", "Figma", "Government"],
+    image: "/photo/123.jpg",
+  },
+  // Entri UI/UX AISCOMP
   {
     icon: <Briefcase />,
     role: "UI/UX Designer (3rd Place Winner)",
@@ -57,8 +74,44 @@ const experiences: ExperienceData[] = [
     description:
       "As part of 'Team Asikin', developed the award-winning submission for a web redesign competition. I utilized Figma to overhaul the user experience, focusing on modern UI principles, interactive prototyping, and improved usability.",
     tags: ["Figma", "UI Design", "Prototyping", "User Research", "Competition"],
-    image: "/photo/123.jpg",
   },
+  // --- BARU: Magang di Indobot Academy ---
+  {
+    icon: <Users />, // Menggunakan ikon Users untuk peran multi-fungsi
+    role: "Intern (Creative Design, KOL, Ops, Finance, HR)",
+    company: "Indobot Academy",
+    duration: "November 2024 - Januari 2025",
+    description:
+      "Gained diverse operational experience through an internship program, contributing across multiple departments including Creative Design, Key Opinion Leader (KOL) management support, Operations System assistance, Finance administration, and Human Resources tasks.",
+    tags: [
+      "Internship",
+      "Creative Design",
+      "KOL Management",
+      "Operations",
+      "Finance Admin",
+      "HR Support",
+      "Multi-tasking",
+    ],
+    // Tidak ada gambar untuk entri ini
+  },
+  // Pengalaman di Telkom Akses
+  {
+    icon: <Briefcase />,
+    role: "IT Support & Project Based Developer",
+    company: "Telkom Akses Indonesia, Jakarta",
+    duration: "2025 - Sekarang",
+    description:
+      "Providing IT support and contributing to project-based development initiatives at Telkom Akses. Gained practical experience in troubleshooting, system maintenance, and collaborative software development environments within the telecommunications sector.",
+    tags: [
+      "IT Support",
+      "Project Development",
+      "Troubleshooting",
+      "System Maintenance",
+      "Collaboration",
+      "Telkom Akses",
+    ],
+  },
+  // Entri Content Creator (Tetap)
   {
     icon: <Video />,
     role: "Content Creator",
@@ -68,6 +121,7 @@ const experiences: ExperienceData[] = [
       "Creating engaging and high-energy TikTok content that celebrates Tokusatsu, Anime, and Drama culture. I blend storytelling, humor, and passion to entertain and connect with a growing global audience.",
     tags: ["Tokusatsu", "Anime", "Storytelling", "Video Editing"],
   },
+  // Entri Graphic Designer (Tetap)
   {
     icon: <Code />,
     role: "Junior Graphic Designer",
@@ -85,13 +139,109 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 };
 
+// --- VARIAN UNTUK MENU BARU ---
+const mobileDrawerVariants: Variants = {
+  initial: {
+    x: "100%",
+  },
+  animate: {
+    x: "0%",
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 30,
+      delayChildren: 0.2,
+      staggerChildren: 0.08,
+    },
+  },
+  exit: {
+    x: "100%",
+    transition: {
+      duration: 0.3,
+      ease: [0.42, 0, 0.58, 1],
+    },
+  },
+};
+
+const linkFadeInUp: Variants = {
+  initial: {
+    opacity: 0,
+    y: 30,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut",
+    },
+  },
+};
+
+const backdropVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
+// --- KOMPONEN IKON HAMBURGER ANIMASI ---
+const AnimatedHamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
+  const variant = isOpen ? "open" : "closed";
+  const top = {
+    closed: { rotate: 0, translateY: 0 },
+    open: { rotate: 45, translateY: 8 },
+  };
+  const middle = {
+    closed: { opacity: 1 },
+    open: { opacity: 0 },
+  };
+  const bottom = {
+    closed: { rotate: 0, translateY: 0 },
+    open: { rotate: -45, translateY: -8 },
+  };
+
+  return (
+    <motion.svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      animate={variant}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
+      <motion.path
+        d="M3 6H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={top}
+      />
+      <motion.path
+        d="M3 12H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={middle}
+      />
+      <motion.path
+        d="M3 18H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={bottom}
+      />
+    </motion.svg>
+  );
+};
+
 // --- PROPS UNTUK KOMPONEN ExperienceItem ---
 interface ExperienceItemProps {
   item: ExperienceData;
   index: number;
 }
 
-// --- KOMPONEN UNTUK SETIAP ITEM DI TIMELINE (DENGAN LOGIKA BARU) ---
+// --- KOMPONEN UNTUK SETIAP ITEM DI TIMELINE ---
 const ExperienceItem: React.FC<ExperienceItemProps> = ({ item, index }) => {
   const [isPhotoVisible, setIsPhotoVisible] = useState(false);
   const isOdd = index % 2 !== 0;
@@ -198,6 +348,10 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({ item, index }) => {
 
 // --- HALAMAN UTAMA EXPERIENCE ---
 export default function Experience() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const closeMenu = () => setIsMenuOpen(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   const ref = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -207,37 +361,154 @@ export default function Experience() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
+      {/* Navigasi */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold">
+          <Link href="/" className="text-2xl font-bold" onClick={closeMenu}>
             Aliif<span className="text-primary text-3xl">.</span>
           </Link>
-          <div className="hidden md:flex gap-8">
-            <Link href="/" className="text-foreground hover:text-primary transition-colors duration-300">
+
+          {/* Navigasi Desktop (breakpoint 'lg') */}
+          <div className="hidden lg:flex gap-8">
+            <Link
+              href="/"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Home
             </Link>
-            <Link href="/about" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/about"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               About Me
             </Link>
-            <Link href="/skills" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/skills"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Skills & Tools
             </Link>
-            <Link href="/projects" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/projects"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Projects
             </Link>
             <Link href="/experience" className="font-semibold text-primary">
               Experience
             </Link>
-            <Link href="/testimonials" className="text-foreground hover:text-foreground/70 transition">
+            <Link
+              href="/testimonials"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Testimonials
             </Link>
-            <Link href="/contact" className="text-foreground hover:text-primary transition-colors duration-300">
+            <Link
+              href="/contact"
+              className="text-foreground hover:text-primary transition-colors duration-300"
+            >
               Contact Me
             </Link>
           </div>
+
+          {/* Tombol Hamburger Menu (tampil di bawah 'lg') */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              aria-label="Toggle navigation menu"
+            >
+              <AnimatedHamburgerIcon isOpen={isMenuOpen} />
+            </Button>
+          </div>
         </div>
       </nav>
+
+      {/* Menu Drawer Mobile */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Backdrop Gelap */}
+            <motion.div
+              key="backdrop"
+              variants={backdropVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              onClick={closeMenu}
+              className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            />
+
+            {/* Panel Menu (Glassmorphism) */}
+            <motion.div
+              key="drawer"
+              variants={mobileDrawerVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-background/80 backdrop-blur-lg flex flex-col items-center justify-center gap-10 lg:hidden"
+            >
+              <MotionLink
+                href="/"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Home
+              </MotionLink>
+              <MotionLink
+                href="/about"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                About Me
+              </MotionLink>
+              <MotionLink
+                href="/skills"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Skills & Tools
+              </MotionLink>
+              <MotionLink
+                href="/projects"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Projects
+              </MotionLink>
+              <MotionLink
+                href="/experience"
+                className="text-2xl font-semibold text-primary" // Highlight halaman ini
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Experience
+              </MotionLink>
+              <MotionLink
+                href="/testimonials"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Testimonials
+              </MotionLink>
+              <MotionLink
+                href="/contact"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Contact Me
+              </MotionLink>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Experience Section */}
       <section className="py-24 px-4 overflow-hidden">
@@ -256,7 +527,8 @@ export default function Experience() {
               My Experience
             </h1>
             <p className="text-lg text-foreground/60 max-w-2xl mx-auto mt-4">
-              A timeline of my professional growth, key projects, and educational milestones.
+              A timeline of my professional growth, key projects, and educational
+              milestones.
             </p>
           </motion.div>
 

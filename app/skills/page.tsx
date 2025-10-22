@@ -2,9 +2,19 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, Variants, easeOut, easeInOut } from "framer-motion";
+import {
+  motion,
+  Variants,
+  easeOut,
+  easeInOut,
+  AnimatePresence, // <-- 1. TAMBAHKAN
+} from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import React from "react";
+import React, { useState } from "react"; // <-- 2. TAMBAHKAN useState
+import { Button } from "@/components/ui/button"; // <-- 3. TAMBAHKAN Button
+
+// --- 4. TAMBAHKAN KOMPONEN LINK ANIMASI ---
+const MotionLink = motion(Link);
 
 // --- DATA BARU: CREATOR PLATFORMS ---
 const creatorPlatforms = [
@@ -88,7 +98,108 @@ const staggerContainer: Variants = {
   },
 };
 
+// --- 5. TAMBAHKAN SEMUA VARIAN UNTUK MENU BARU ---
+const mobileDrawerVariants: Variants = {
+  initial: {
+    x: "100%",
+  },
+  animate: {
+    x: "0%",
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 30,
+      delayChildren: 0.2,
+      staggerChildren: 0.08,
+    },
+  },
+  exit: {
+    x: "100%",
+    transition: {
+      duration: 0.3,
+      ease: [0.42, 0, 0.58, 1],
+    },
+  },
+};
+
+const linkFadeInUp: Variants = {
+  initial: {
+    opacity: 0,
+    y: 30,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut",
+    },
+  },
+};
+
+const backdropVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
+// --- 6. TAMBAHKAN KOMPONEN IKON HAMBURGER ANIMASI ---
+const AnimatedHamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
+  const variant = isOpen ? "open" : "closed";
+  const top = {
+    closed: { rotate: 0, translateY: 0 },
+    open: { rotate: 45, translateY: 8 },
+  };
+  const middle = {
+    closed: { opacity: 1 },
+    open: { opacity: 0 },
+  };
+  const bottom = {
+    closed: { rotate: 0, translateY: 0 },
+    open: { rotate: -45, translateY: -8 },
+  };
+
+  return (
+    <motion.svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      animate={variant}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
+      <motion.path
+        d="M3 6H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={top}
+      />
+      <motion.path
+        d="M3 12H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={middle}
+      />
+      <motion.path
+        d="M3 18H21"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        variants={bottom}
+      />
+    </motion.svg>
+  );
+};
+
 export default function Skills() {
+  // --- 7. TAMBAHKAN STATE & HANDLER UNTUK MENU ---
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const closeMenu = () => setIsMenuOpen(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   return (
     <div className="min-h-screen bg-background text-foreground relative isolate overflow-hidden">
       {/* Latar Belakang Aurora Dinamis */}
@@ -107,37 +218,154 @@ export default function Skills() {
         }}
       />
 
-      {/* Navbar */}
+      {/* --- 8. GANTI BLOK <nav> LAMA DENGAN YANG BARU --- */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold">
+          <Link href="/" className="text-2xl font-bold" onClick={closeMenu}>
             Aliif<span className="text-primary text-3xl">.</span>
           </Link>
-          <div className="hidden md:flex gap-8">
-            <Link href="/" className="text-foreground hover:text-primary transition-colors">
+
+          {/* Navigasi Desktop (breakpoint 'lg') */}
+          <div className="hidden lg:flex gap-8">
+            <Link
+              href="/"
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Home
             </Link>
-            <Link href="/about" className="text-foreground hover:text-primary transition-colors">
+            <Link
+              href="/about"
+              className="text-foreground hover:text-primary transition-colors"
+            >
               About Me
             </Link>
             <Link href="/skills" className="font-semibold text-primary">
               Skills & Tools
             </Link>
-            <Link href="/projects" className="text-foreground hover:text-primary transition-colors">
+            <Link
+              href="/projects"
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Projects
             </Link>
-            <Link href="/experience" className="text-foreground hover:text-primary transition-colors">
+            <Link
+              href="/experience"
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Experience
             </Link>
-            <Link href="/testimonials" className="text-foreground hover:text-primary transition-colors">
+            <Link
+              href="/testimonials"
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Testimonials
             </Link>
-            <Link href="/contact" className="text-foreground hover:text-primary transition-colors">
+            <Link
+              href="/contact"
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Contact Me
             </Link>
           </div>
+
+          {/* Tombol Hamburger Menu (tampil di bawah 'lg') */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              aria-label="Toggle navigation menu"
+            >
+              <AnimatedHamburgerIcon isOpen={isMenuOpen} />
+            </Button>
+          </div>
         </div>
       </nav>
+
+      {/* --- 9. TAMBAHKAN BLOK MENU DRAWER DI SINI --- */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Backdrop Gelap */}
+            <motion.div
+              key="backdrop"
+              variants={backdropVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              onClick={closeMenu}
+              className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            />
+
+            {/* Panel Menu (Glassmorphism) */}
+            <motion.div
+              key="drawer"
+              variants={mobileDrawerVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-background/80 backdrop-blur-lg flex flex-col items-center justify-center gap-10 lg:hidden"
+            >
+              <MotionLink
+                href="/"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Home
+              </MotionLink>
+              <MotionLink
+                href="/about"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                About Me
+              </MotionLink>
+              <MotionLink
+                href="/skills"
+                className="text-2xl font-semibold text-primary" // Highlight halaman ini
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Skills & Tools
+              </MotionLink>
+              <MotionLink
+                href="/projects"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Projects
+              </MotionLink>
+              <MotionLink
+                href="/experience"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Experience
+              </MotionLink>
+              <MotionLink
+                href="/testimonials"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Testimonials
+              </MotionLink>
+              <MotionLink
+                href="/contact"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                onClick={closeMenu}
+                variants={linkFadeInUp}
+              >
+                Contact Me
+              </MotionLink>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
       <main className="py-24 px-4">
@@ -157,8 +385,8 @@ export default function Skills() {
               Skills & Platforms
             </h1>
             <p className="text-lg text-foreground/60 max-w-2xl mx-auto mt-4">
-              Dari kreasi konten hingga kode, ini adalah platform dan teknologi
-              yang saya gunakan untuk bercerita dan membangun.
+              From storytelling to coding, these are the technologies that power
+              my mission to create with the light of innovation.
             </p>
           </motion.div>
 
@@ -223,7 +451,11 @@ export default function Skills() {
               My Technical Stack
             </h2>
             {skillCategories.map((category) => (
-              <motion.div key={category.category} variants={fadeInUp} className="mb-12">
+              <motion.div
+                key={category.category}
+                variants={fadeInUp}
+                className="mb-12"
+              >
                 <h3 className="text-2xl font-semibold mb-6 text-center md:text-left">
                   {category.category}
                 </h3>
