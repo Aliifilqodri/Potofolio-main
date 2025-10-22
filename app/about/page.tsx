@@ -532,7 +532,7 @@ export default function About() {
                     </Button>
                   </motion.div>
                 </Link>
-                <a href="/Aliif-cv.pdf" download>
+                <a href="/aliifilqodri-cv.pdf" download>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button size="lg" variant="outline">
                       <Download className="mr-2 h-4 w-4" />
