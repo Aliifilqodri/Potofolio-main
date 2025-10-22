@@ -62,7 +62,14 @@ const experiences: ExperienceData[] = [
     duration: "2024",
     description:
       "Participated in a government website redesign competition held by Sticky Malang, achieving a top 10 position. Focused on improving user interface and experience for public service websites using Figma.",
-    tags: ["Web Redesign", "UI Design", "UX Design", "Competition", "Figma", "Government"],
+    tags: [
+      "Web Redesign",
+      "UI Design",
+      "UX Design",
+      "Competition",
+      "Figma",
+      "Government",
+    ],
     image: "/photo/123.jpg",
   },
   // Entri UI/UX AISCOMP
@@ -527,8 +534,8 @@ export default function Experience() {
               My Experience
             </h1>
             <p className="text-lg text-foreground/60 max-w-2xl mx-auto mt-4">
-              A timeline of my professional growth, key projects, and educational
-              milestones.
+              A timeline of my professional growth, key projects, and
+              educational milestones.
             </p>
           </motion.div>
 

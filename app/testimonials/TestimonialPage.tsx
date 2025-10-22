@@ -4,15 +4,15 @@ import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence, Variants } from "framer-motion"; // <-- 1. TAMBAHKAN Variants
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Testimonial } from "../types/testimonial";
 import { Star, Quote, Upload, Loader2, X } from "lucide-react";
 import toast from "react-hot-toast";
 
-// --- 2. TAMBAHKAN KOMPONEN LINK ANIMASI ---
+// --- KOMPONEN LINK ANIMASI ---
 const MotionLink = motion(Link);
 
-// 🔹 Komponen Kartu Testimoni
+// 🔹 Komponen Kartu Testimoni (VERSI UPGRADED: SHADOW, GLOW, SHINE)
 const TestimonialCard = ({
   testimonial,
   onImageClick,
@@ -26,15 +26,33 @@ const TestimonialCard = ({
       initial={{ opacity: 0, scale: 0.8, y: 50 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.8 }}
+      whileHover={{ y: -8, scale: 1.02 }} // Efek 'lift' saat hover
       transition={{ type: "spring", stiffness: 200, damping: 25 }}
-      className="group relative bg-card/50 border border-border rounded-xl p-8 break-inside-avoid cursor-default backdrop-blur-sm"
+      // --- PENAMBAHAN EFEK SHADOW, GLOW, BORDER, & SHINE ---
+      className="group relative bg-card/50 border border-border rounded-xl p-8 
+                 break-inside-avoid cursor-default backdrop-blur-sm 
+                 shadow-lg shadow-black/10 
+                 overflow-hidden 
+                 transition-all duration-300 ease-in-out
+                 group-hover:border-primary/50 
+                 group-hover:shadow-primary/20 
+                 group-hover:shadow-2xl
+                 
+                 before:content-[''] before:absolute before:top-0 before:-left-full 
+                 before:w-full before:h-full 
+                 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent
+                 before:skew-x-[-25deg] 
+                 group-hover:before:left-full 
+                 before:transition-all before:duration-700 before:ease-in-out"
     >
       <Quote
-        className="absolute top-4 right-4 w-12 h-12 text-border/20 transform transition-transform duration-300 group-hover:scale-110"
+        // Efek parallax masih ada
+        className="absolute top-4 right-4 w-12 h-12 text-border/20 transform transition-all duration-300 group-hover:scale-110 group-hover:-translate-x-2 group-hover:-translate-y-2 group-hover:-rotate-6"
         strokeWidth={1.5}
       />
+      {/* Konten dibuat 'relative z-10' agar berada DI ATAS efek shine */}
       <div className="relative z-10 space-y-4">
-        <div className="flex gap-1">
+        <div className="flex gap-1 transition-transform duration-300 group-hover:-translate-x-1">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
@@ -53,7 +71,7 @@ const TestimonialCard = ({
         <div className="flex items-center gap-3 pt-4 border-t border-border">
           {testimonial.photo && (
             <div
-              className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-border cursor-pointer hover:scale-105 transition-transform duration-200"
+              className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-border cursor-pointer group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300"
               onClick={() => onImageClick(testimonial.photo!, testimonial.name)}
             >
               <Image
@@ -66,7 +84,9 @@ const TestimonialCard = ({
             </div>
           )}
           <div>
-            <p className="font-semibold text-foreground">{testimonial.name}</p>
+            <p className="font-semibold text-foreground transition-transform duration-300 group-hover:translate-x-1">
+              {testimonial.name}
+            </p>
             <p className="text-sm text-foreground/60">
               {testimonial.status || "Client"}
             </p>
@@ -114,7 +134,7 @@ const StarRatingInput = ({
   );
 };
 
-// --- 3. TAMBAHKAN SEMUA VARIAN UNTUK MENU BARU ---
+// --- VARIAN UNTUK MENU BARU ---
 const mobileDrawerVariants: Variants = {
   initial: {
     x: "100%",
@@ -159,7 +179,7 @@ const backdropVariants: Variants = {
   exit: { opacity: 0 },
 };
 
-// --- 4. TAMBAHKAN KOMPONEN IKON HAMBURGER ANIMASI ---
+// --- KOMPONEN IKON HAMBURGER ANIMASI ---
 const AnimatedHamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
   const variant = isOpen ? "open" : "closed";
   const top = {
@@ -241,7 +261,13 @@ export default function Testimonials({
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   useEffect(() => {
-    setTestimonials(testimonialsData);
+    // Cek jika testimonialsData ada dan bukan array kosong
+    if (testimonialsData && testimonialsData.length > 0) {
+      setTestimonials(testimonialsData);
+    } else {
+      // Jika kosong, set ke array kosong (atau bisa juga dummy data)
+      setTestimonials([]);
+    }
   }, [testimonialsData]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -281,6 +307,12 @@ export default function Testimonials({
           setFormData({ name: "", description: "", status: "" });
           setRating(5);
           setSelectedFile(null);
+
+          // Optimistic UI update: Tambahkan testimoni baru ke state
+          if (result.newTestimonial) {
+            setTestimonials((prev) => [result.newTestimonial, ...prev]);
+          }
+
           return "Terima kasih atas feedback Anda!";
         } else {
           throw new Error(result?.error || "Gagal mengirim testimoni.");
@@ -306,7 +338,7 @@ export default function Testimonials({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* --- 6. GANTI BLOK <nav> LAMA DENGAN YANG BARU --- */}
+      {/* --- Navigasi --- */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold" onClick={closeMenu}>
@@ -345,10 +377,7 @@ export default function Testimonials({
             >
               Experience
             </Link>
-            <Link
-              href="/testimonials"
-              className="font-semibold text-primary"
-            >
+            <Link href="/testimonials" className="font-semibold text-primary">
               Testimonials
             </Link>
             <Link
@@ -373,7 +402,7 @@ export default function Testimonials({
         </div>
       </nav>
 
-      {/* --- 7. TAMBAHKAN BLOK MENU DRAWER DI SINI --- */}
+      {/* --- Menu Drawer Mobile --- */}
       <AnimatePresence>
         {isMenuOpen && (
           <>
@@ -492,6 +521,18 @@ export default function Testimonials({
             ))}
           </AnimatePresence>
         </div>
+
+        {/* Tambahan: Pesan jika tidak ada testimoni */}
+        {testimonials.length === 0 && (
+          <div className="text-center py-16 text-foreground/60">
+            <Quote size={48} className="mx-auto mb-4" />
+            <h3 className="text-2xl font-semibold">Belum Ada Testimoni</h3>
+            <p className="mt-2 max-w-md mx-auto">
+              Jadilah yang pertama memberikan feedback! Silakan isi formulir di
+              bawah ini.
+            </p>
+          </div>
+        )}
       </section>
 
       {/* 🔸 Formulir Testimonial */}

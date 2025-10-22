@@ -1,7 +1,7 @@
 "use client";
 
 import React, {
-  useState, // <-- 1. TAMBAHKAN
+  useState, // <-- SUDAH ADA
   useEffect,
   ChangeEvent,
   FormEvent,
@@ -19,8 +19,8 @@ import {
 } from "@/components/ui/tooltip";
 import {
   motion,
-  AnimatePresence, // <-- 2. TAMBAHKAN
-  Variants, // <-- 3. TAMBAHKAN
+  AnimatePresence, // <-- SUDAH ADA
+  Variants, // <-- SUDAH ADA
 } from "framer-motion";
 import {
   Mail,
@@ -36,10 +36,11 @@ import {
   PenSquare,
 } from "lucide-react";
 
-// --- 4. TAMBAHKAN KOMPONEN LINK ANIMASI ---
+// --- KOMPONEN LINK & TOMBOL ANIMASI ---
 const MotionLink = motion(Link);
+const MotionButton = motion(Button); // <-- 1. MODIFIKASI: Jadikan Button bisa dianimasi
 
-// --- DATA KONTAK & SOSIAL MEDIA ---
+// --- DATA KONTAK & SOSIAL MEDIA (Tidak Berubah) ---
 const contactDetails = [
   {
     icon: <Mail />,
@@ -74,11 +75,9 @@ const socialLinks = [
   },
 ];
 
-// --- 5. TAMBAHKAN SEMUA VARIAN UNTUK MENU BARU ---
+// --- VARIAN ANIMASI MENU (Tidak Berubah) ---
 const mobileDrawerVariants: Variants = {
-  initial: {
-    x: "100%",
-  },
+  initial: { x: "100%" },
   animate: {
     x: "0%",
     transition: {
@@ -91,35 +90,58 @@ const mobileDrawerVariants: Variants = {
   },
   exit: {
     x: "100%",
-    transition: {
-      duration: 0.3,
-      ease: [0.42, 0, 0.58, 1],
-    },
+    transition: { duration: 0.3, ease: [0.42, 0, 0.58, 1] },
   },
 };
-
 const linkFadeInUp: Variants = {
-  initial: {
-    opacity: 0,
-    y: 30,
-  },
+  initial: { opacity: 0, y: 30 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut",
-    },
+    transition: { duration: 0.3, ease: "easeOut" },
   },
 };
-
 const backdropVariants: Variants = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
 };
 
-// --- 6. TAMBAHKAN KOMPONEN IKON HAMBURGER ANIMASI ---
+// --- 2. VARIAN ANIMASI BARU (Stagger, FadeIn, Jiggle) ---
+const staggerContainer = (delayChildren = 0): Variants => ({
+  hidden: { opacity: 1 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: delayChildren,
+    },
+  },
+});
+
+const fadeInFromBottom: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 120, damping: 20 },
+  },
+};
+
+const iconHoverVariant: Variants = {
+  initial: {
+    scale: 1,
+    rotate: 0,
+  },
+  hover: {
+    scale: 1.2,
+    rotate: [0, -15, 15, -15, 15, 0], // Efek jiggle/goyang
+    transition: { duration: 0.5, ease: "easeInOut" },
+  },
+};
+// -----------------------------------------------------------
+
+// --- KOMPONEN IKON HAMBURGER (Tidak Berubah) ---
 const AnimatedHamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
   const variant = isOpen ? "open" : "closed";
   const top = {
@@ -170,18 +192,16 @@ const AnimatedHamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
   );
 };
 
-// --- KOMPONEN ANIMASI TEKS (Sudah ada) ---
+// --- KOMPONEN ANIMASI TEKS (Tidak Berubah) ---
 interface AnimatedTextProps {
   text: string;
   className?: string;
 }
-
 const AnimatedText: React.FC<AnimatedTextProps> = ({
   text,
   className = "",
 }) => {
   const words = text.split(" ");
-
   const container: Variants = {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
@@ -189,7 +209,6 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
       transition: { staggerChildren: 0.05, delayChildren: 0.04 * i },
     }),
   };
-
   const child: Variants = {
     visible: {
       opacity: 1,
@@ -198,7 +217,6 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
     },
     hidden: { opacity: 0, y: 20 },
   };
-
   return (
     <motion.h1
       variants={container}
@@ -225,7 +243,6 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
 
 // --- KOMPONEN UTAMA HALAMAN KONTAK ---
 export default function Contact() {
-  // --- 7. TAMBAHKAN STATE & HANDLER UNTUK MENU ---
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -245,7 +262,6 @@ export default function Contact() {
     const handleMouseMove = (e: globalThis.MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
-
     window.addEventListener("mousemove", handleMouseMove as EventListener);
     return () =>
       window.removeEventListener("mousemove", handleMouseMove as EventListener);
@@ -284,7 +300,7 @@ export default function Contact() {
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background text-foreground relative isolate overflow-hidden">
-        {/* Latar Belakang Interaktif */}
+        {/* Latar Belakang Interaktif (Tidak Berubah) */}
         <motion.div
           className="pointer-events-none absolute -inset-px rounded-xl transition duration-300"
           style={{
@@ -292,14 +308,12 @@ export default function Contact() {
           }}
         />
 
-        {/* --- 8. GANTI BLOK <nav> LAMA DENGAN YANG BARU --- */}
+        {/* --- Navigasi & Menu Drawer (Tidak Berubah) --- */}
         <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <Link href="/" className="text-2xl font-bold" onClick={closeMenu}>
               Aliif<span className="text-primary text-3xl">.</span>
             </Link>
-
-            {/* Navigasi Desktop (breakpoint 'lg') */}
             <div className="hidden lg:flex gap-8">
               {[
                 { href: "/", label: "Home" },
@@ -323,8 +337,6 @@ export default function Contact() {
                 </Link>
               ))}
             </div>
-
-            {/* Tombol Hamburger Menu (tampil di bawah 'lg') */}
             <div className="lg:hidden">
               <Button
                 variant="ghost"
@@ -337,12 +349,9 @@ export default function Contact() {
             </div>
           </div>
         </nav>
-
-        {/* --- 9. TAMBAHKAN BLOK MENU DRAWER DI SINI --- */}
         <AnimatePresence>
           {isMenuOpen && (
             <>
-              {/* Backdrop Gelap */}
               <motion.div
                 key="backdrop"
                 variants={backdropVariants}
@@ -352,8 +361,6 @@ export default function Contact() {
                 onClick={closeMenu}
                 className="fixed inset-0 z-40 bg-black/50 lg:hidden"
               />
-
-              {/* Panel Menu (Glassmorphism) */}
               <motion.div
                 key="drawer"
                 variants={mobileDrawerVariants}
@@ -412,7 +419,7 @@ export default function Contact() {
                 </MotionLink>
                 <MotionLink
                   href="/contact"
-                  className="text-2xl font-semibold text-primary" // Highlight halaman ini
+                  className="text-2xl font-semibold text-primary"
                   onClick={closeMenu}
                   variants={linkFadeInUp}
                 >
@@ -423,30 +430,39 @@ export default function Contact() {
           )}
         </AnimatePresence>
 
-        {/* Bagian Kontak (Kode Anda, sudah benar) */}
+        {/* --- Bagian Kontak --- */}
         <section className="py-24 px-4">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Sisi Kiri: Info */}
+            {/* 3. MODIFIKASI: Terapkan variants stagger di sini */}
             <motion.div
               className="space-y-10"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
+              variants={staggerContainer()} // Terapkan container stagger
+              initial="hidden"
+              animate="show"
             >
-              <div className="space-y-4">
+              <motion.div className="space-y-4" variants={fadeInFromBottom}>
                 <span className="text-sm font-mono uppercase text-primary tracking-widest">
                   Let's Connect
                 </span>
                 <AnimatedText text="Let's build something amazing together." />
-                <p className="text-lg text-foreground/70 pt-2">
-                  Have an idea, a project, or just want to say hi? My inbox is
-                  always open. I'm excited to hear from you.
-                </p>
-              </div>
+              </motion.div>
 
-              <div className="space-y-6 pt-6 border-t border-border">
+              <motion.p
+                className="text-lg text-foreground/70 pt-2"
+                variants={fadeInFromBottom} // Animasi fade in
+              >
+                Have an idea, a project, or just want to say hi? My inbox is
+                always open. I'm excited to hear from you.
+              </motion.p>
+
+              <motion.div
+                className="space-y-6 pt-6 border-t border-border"
+                variants={fadeInFromBottom} // Animasi fade in
+              >
                 {contactDetails.map((detail) => (
-                  <a
+                  // 4. MODIFIKASI: Ubah <a> menjadi motion.a untuk ikon "jiggle"
+                  <motion.a
                     key={detail.title}
                     href={detail.href}
                     target={
@@ -454,10 +470,18 @@ export default function Contact() {
                     }
                     rel="noopener noreferrer"
                     className="flex items-center gap-4 group"
+                    initial="initial"
+                    whileHover="hover" // Picu state "hover"
                   >
                     <div className="relative p-3 bg-muted text-primary rounded-lg border border-border overflow-hidden">
                       <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -translate-x-full group-hover:translate-x-0 skew-x-[-15deg]" />
-                      <span className="relative z-10">{detail.icon}</span>
+                      {/* 5. MODIFIKASI: Bungkus ikon dengan motion.span */}
+                      <motion.span
+                        className="relative z-10 block"
+                        variants={iconHoverVariant} // Terapkan varian jiggle
+                      >
+                        {detail.icon}
+                      </motion.span>
                     </div>
                     <div>
                       <h4 className="font-bold">{detail.title}</h4>
@@ -465,11 +489,14 @@ export default function Contact() {
                         {detail.value}
                       </p>
                     </div>
-                  </a>
+                  </motion.a>
                 ))}
-              </div>
+              </motion.div>
 
-              <div className="flex gap-4 pt-6 border-t border-border">
+              <motion.div
+                className="flex gap-4 pt-6 border-t border-border"
+                variants={fadeInFromBottom} // Animasi fade in
+              >
                 {socialLinks.map((social) => (
                   <Tooltip key={social.label}>
                     <TooltipTrigger asChild>
@@ -490,20 +517,19 @@ export default function Contact() {
                     </TooltipContent>
                   </Tooltip>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
 
             {/* Sisi Kanan: Formulir Kontak */}
+            {/* 6. MODIFIKASI: Terapkan variants stagger di sini */}
             <motion.div
               className="bg-muted/30 border border-border rounded-xl p-8 backdrop-blur-sm"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeInOut" }}
+              variants={staggerContainer(0.2)} // Beri sedikit delay
+              initial="hidden"
+              animate="show"
             >
               <motion.h2
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                variants={fadeInFromBottom} // Animasi fade in
                 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-3"
               >
                 <PenSquare className="text-primary" />
@@ -513,7 +539,11 @@ export default function Contact() {
               </motion.h2>
 
               <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="relative group">
+                {/* 7. MODIFIKASI: Form Input "Name" */}
+                <motion.div
+                  className="relative group"
+                  variants={fadeInFromBottom}
+                >
                   <Input
                     name="name"
                     id="name"
@@ -521,7 +551,8 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="peer block w-full bg-transparent pt-4 pb-2 px-2 text-lg border-b-2 border-foreground/30 focus:outline-none focus:border-primary transition"
+                    // Hapus focus:border-primary
+                    className="peer block w-full bg-transparent pt-4 pb-2 px-2 text-lg border-b-2 border-foreground/30 focus:outline-none transition"
                     placeholder=" "
                   />
                   <Label
@@ -530,9 +561,15 @@ export default function Contact() {
                   >
                     Your Name
                   </Label>
-                </div>
+                  {/* TAMBAHKAN INI: Garis bawah yang animasi */}
+                  <span className="absolute bottom-0 left-1/2 w-full h-0.5 bg-primary transform -translate-x-1/2 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 ease-in-out" />
+                </motion.div>
 
-                <div className="relative group">
+                {/* 8. MODIFIKASI: Form Input "Email" */}
+                <motion.div
+                  className="relative group"
+                  variants={fadeInFromBottom}
+                >
                   <Input
                     name="email"
                     id="email"
@@ -540,7 +577,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="peer block w-full bg-transparent pt-4 pb-2 px-2 text-lg border-b-2 border-foreground/30 focus:outline-none focus:border-primary transition"
+                    className="peer block w-full bg-transparent pt-4 pb-2 px-2 text-lg border-b-2 border-foreground/30 focus:outline-none transition"
                     placeholder=" "
                   />
                   <Label
@@ -549,16 +586,22 @@ export default function Contact() {
                   >
                     Your Email
                   </Label>
-                </div>
+                  {/* TAMBAHKAN INI: Garis bawah yang animasi */}
+                  <span className="absolute bottom-0 left-1/2 w-full h-0.5 bg-primary transform -translate-x-1/2 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 ease-in-out" />
+                </motion.div>
 
-                <div className="relative group">
+                {/* 9. MODIFIKASI: Form Input "Message" */}
+                <motion.div
+                  className="relative group"
+                  variants={fadeInFromBottom}
+                >
                   <Textarea
                     name="message"
                     id="message"
                     value={formData.message}
                     onChange={handleInputChange}
                     required
-                    className="peer block w-full bg-transparent pt-4 pb-2 px-2 text-lg border-b-2 border-foreground/30 focus:outline-none focus:border-primary transition resize-none"
+                    className="peer block w-full bg-transparent pt-4 pb-2 px-2 text-lg border-b-2 border-foreground/30 focus:outline-none transition resize-none"
                     placeholder=" "
                     rows={4}
                   />
@@ -568,15 +611,24 @@ export default function Contact() {
                   >
                     Your Message
                   </Label>
-                </div>
+                  {/* TAMBAHKAN INI: Garis bawah yang animasi */}
+                  <span className="absolute bottom-0 left-1/2 w-full h-0.5 bg-primary transform -translate-x-1/2 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 ease-in-out" />
+                </motion.div>
 
-                <Button
+                {/* 10. MODIFIKASI: Ganti Button -> MotionButton */}
+                <MotionButton
                   type="submit"
                   size="lg"
                   disabled={isSubmitting}
                   className="w-full relative overflow-hidden group"
+                  variants={fadeInFromBottom} // Animasi fade in
+                  whileHover={{ scale: 1.03, y: -3 }} // Efek "Pop"
+                  whileTap={{ scale: 0.98, y: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 >
+                  {/* Efek wipe (sudah ada) */}
                   <span className="absolute w-full h-full bg-gradient-to-r from-primary/50 to-primary/80 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+
                   <span className="relative z-10 flex items-center gap-2">
                     {isSubmitting ? (
                       <>
@@ -588,8 +640,9 @@ export default function Contact() {
                       </>
                     )}
                   </span>
-                </Button>
+                </MotionButton>
 
+                {/* Status Sukses/Error (Tidak Berubah) */}
                 <AnimatePresence>
                   {submissionStatus === "success" && (
                     <motion.p
